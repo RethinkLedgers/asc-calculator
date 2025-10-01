@@ -118,7 +118,7 @@ export default function Calculator() {
         r.id === id
           ? {
               ...r,
-              [field]: field === "name" || field === "payer" ? (value as any) : Number(value.replace(/[^0-9.\-]/g, "")) || 0,
+              [field]: field === "name" || field === "payer" ? value : Number(value.replace(/[^0-9.\-]/g, "")) || 0,
             }
           : r
       )
@@ -226,7 +226,7 @@ export default function Calculator() {
       const text = await file.text();
       const data = JSON.parse(text);
       if (!Array.isArray(data)) throw new Error("Invalid file");
-      const cleaned: ProcRow[] = data.map((r: any) => ({
+      const cleaned: ProcRow[] = data.map((r: Record<string, unknown>) => ({
         id: uid(),
         name: String(r.name ?? r.ProcedureType ?? r["Procedure Type"] ?? "Imported"),
         reimbursement: Number(r.reimbursement ?? r["Reimbursement ($)"] ?? r.Reimbursement ?? 0),
@@ -235,7 +235,7 @@ export default function Calculator() {
         fte: Number(r.fte ?? r["FTE Expense ($)"] ?? r.FTE ?? 0),
         fixed: Number(r.fixed ?? r["Fixed Costs ($)"] ?? r.Fixed ?? 0),
         soft: Number(r.soft ?? r["Soft Costs ($)"] ?? r.Soft ?? 0),
-        payer: (r.payer ?? r.Payer ?? "Commercial") as any,
+        payer: (r.payer ?? r.Payer ?? "Commercial") as ProcRow["payer"],
       }));
       setRows(cleaned);
     } catch (e) {
